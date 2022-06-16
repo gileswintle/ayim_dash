@@ -38,23 +38,23 @@ with c1:
     days = 90
     df, ch = get_prices('BTC-USD', days)
     st.metric(f'BitCoin:USD | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
 
     days = 90
     df, ch = get_prices('^TNX', days, dps=2)
     st.metric(f'10 year US T-bill | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
 
     days = 90
     df, ch = get_prices('^GSPC', days)
     st.metric(f'S&P 500 | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
 
 with c2:
     days = 90
     df, ch = get_prices('^FCHI', days)
     st.metric(f'CAC 40 | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
 
     
 
@@ -62,9 +62,9 @@ with c2:
     days = 90
     df, ch = get_prices('AMZN', days)
     st.metric(f'Amazon | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
 
     days = 90
     df, ch = get_prices('NFLX', days)
     st.metric(f'Netflix | {days} days', df.iloc[-1, -2], ch)
-    st.area_chart(df['Adj Close'], height=200)
+    # st.area_chart(df['Adj Close'], height=200)
