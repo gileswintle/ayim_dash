@@ -11,7 +11,7 @@ import datetime
 
 
 
-def get_prices(ticker, days=30, dps=0):
+def get_prices(ticker, days=30, dps=0, pc_ch=False):
     start_date = f'{datetime.datetime.now()-datetime.timedelta(days=days):%Y-%m-%d}'
     end_date = f'{datetime.datetime.now():%Y-%m-%d}'
 
@@ -20,7 +20,10 @@ def get_prices(ticker, days=30, dps=0):
     df['fmtClose'] = df['Adj Close'].apply(lambda x : f'{x:,.{dps}f}')
     df['change'] = df['Adj Close'].pct_change()
     df['change'] = df['change'].apply(lambda x : f'{x:,.2%}')
-    ch = f"{(df['Adj Close'][-1] / df['Adj Close'][0]) - 1:,.2%}"
+    if pc_ch:
+        ch = f"{df['Adj Close'][-1] - df['Adj Close'][0]:,.2%}"
+    else:
+        ch = f"{(df['Adj Close'][-1] / df['Adj Close'][0]) - 1:,.2%}"
     return df, ch
 
 
