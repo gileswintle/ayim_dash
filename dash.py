@@ -42,7 +42,7 @@ with c1:
 
     days = 90
     df, ch = get_prices('^TNX', days, dps=2)
-    st.metric(f'10 year US T-bill | {days} days', df.iloc[-1, -2], ch)
+    st.metric(f'10 year US T-bill | {days} days', df.iloc[-1, -2], ch, delta_color="inverse")
     # st.area_chart(df['Adj Close'], height=200)
 
     days = 90
