@@ -20,7 +20,7 @@ def get_prices(ticker, days=30, dps=0):
     df['fmtClose'] = df['Adj Close'].apply(lambda x : f'{x:,.{dps}f}')
     df['change'] = df['Adj Close'].pct_change()
     df['change'] = df['change'].apply(lambda x : f'{x:,.2%}')
-    ch = f"{(df.loc[-1, 'Adj Close'] / df.loc[0, 'Adj Close']) - 1:,.2%}"
+    ch = f"{(df['Adj Close'][-1] / df['Adj Close'][0]) - 1:,.2%}"
     return df, ch
 
 
