@@ -20,7 +20,7 @@ def get_prices(ticker, days=30, dps=0):
     df['fmtClose'] = df['Adj Close'].apply(lambda x : f'{x:,.{dps}f}')
     df['change'] = df['Adj Close'].pct_change()
     df['change'] = df['change'].apply(lambda x : f'{x:,.2%}')
-    ch = f"{(df.loc[end_date, 'Adj Close'] / df.loc[start_date, 'Adj Close']) - 1:,.2%}"
+    ch = f"{(df.loc[-1, 'Adj Close'] / df.loc[0, 'Adj Close']) - 1:,.2%}"
     return df, ch
 
 
@@ -55,8 +55,6 @@ with c2:
     df, ch = get_prices('^FCHI', days)
     st.metric(f'CAC 40 | {days} days', df.iloc[-1, -2], ch)
     # st.area_chart(df['Adj Close'], height=200)
-
-    
 
 
     days = 90
