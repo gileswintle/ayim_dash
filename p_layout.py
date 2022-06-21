@@ -29,6 +29,7 @@ def layout(fig, title=False, leg=True):
                     itemclick="toggleothers",  # when you are clicking an item in legend all that are not in the same group are hidden
                     x=0,
                     y=0,
+                    bgcolor='rgb(255, 255, 255, 0.4)',
                 ),
                 showlegend=True,
             )

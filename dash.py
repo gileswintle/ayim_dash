@@ -46,6 +46,59 @@ def reits():
 def scpi():
     return layout(scpi_net_sub_chart())
 
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def bbb(days=90):
+    df = pd.read_excel('data/bonds.xlsx')
+    df.set_index('Date', inplace=True)
+    df = df.iloc[-90:, 4]
+    df = df.rename('Euro BBB')
+    dte = datetime.datetime.now()-datetime.timedelta(days=days)
+    for n in range(5):
+        try:
+            dte = pd.Timestamp((dte-datetime.timedelta(days=n)).date())
+            st_val = df.loc[dte]
+            break
+        except KeyError:
+            pass
+    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
+    return df, ch
+
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def frt():
+    df = pd.read_excel('data/bonds.xlsx')
+    df.set_index('Date', inplace=True)
+    df = df.iloc[-90:, 0]
+    df = df.rename('OAT')
+    dte = datetime.datetime.now()-datetime.timedelta(days=days)
+    for n in range(5):
+        try:
+            dte = pd.Timestamp((dte-datetime.timedelta(days=n)).date())
+            st_val = df.loc[dte]
+            break
+        except KeyError:
+            pass
+    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
+    return df, ch
+
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def swap():
+    df = pd.read_excel('data/bonds.xlsx')
+    df.set_index('Date', inplace=True)
+    df = df.iloc[-90:, 3]
+    df = df.rename('5y IR swap')
+    dte = datetime.datetime.now()-datetime.timedelta(days=days)
+    for n in range(5):
+        try:
+            dte = pd.Timestamp((dte-datetime.timedelta(days=n)).date())
+            st_val = df.loc[dte]
+            break
+        except KeyError:
+            pass
+    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
+    return df, ch
+
+
+
 st.set_page_config(layout="wide")
 
 st.title("AYIM dashboard")
@@ -54,35 +107,43 @@ yfr, yus = yield_curves()
 reits = reits()
 scpi = scpi()
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
-def bbb():
-    df = pd.read_excel('data/bbb.xlsx')
-    print(df['bbb'])
-    ch = f"{df.iloc[-1, -1] - df.iloc[-90, -1]:,.2}%"
-    return df, ch
+
 
 
 c1, c2, c3 = st.columns(3)
 
 with c1:
     charts = st.checkbox("Charts", value=False)
+
+    days = 90
+    df, ch = get_prices('^TNX', days, dps=2, pc_ch=True)
+    st.metric(f'10-year US T-bill | {days} days', df.iloc[-1, -2], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
+
+    days = 90
+    df, ch = frt()
+    st.metric(f'10-year French T-bill | {days} days', df.iloc[-1], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df, height=200)
+
+    days = 90
+    df, ch = swap()
+    st.metric(f'5-year Euro IR swap | {days} days', df.iloc[-1], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df, height=200)
+
+    days = 90
+    df, ch = bbb()
+    st.metric(f'BBB Euro area | {days} days', df.iloc[-1], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df, height=200)
+
     days = 90
     df, ch = get_prices('BTC-USD', days)
     st.metric(f'BitCoin:USD | {days} days', df.iloc[-1, -2], ch)
     if charts:
         st.area_chart(df['Adj Close'], height=200)
-
-    days = 90
-    df, ch = get_prices('^TNX', days, dps=2, pc_ch=True)
-    st.metric(f'10 year US T-bill | {days} days', df.iloc[-1, -2], ch, delta_color="inverse")
-    if charts:
-        st.area_chart(df['Adj Close'], height=200)
-
-    days = 90
-    df, ch = bbb()
-    st.metric(f'BBB Euro area | {days} days', df.iloc[-1, -1], ch, delta_color="inverse")
-    if charts:
-        st.area_chart(df['bbb'], height=200)
 
     days = 90
     df, ch = get_prices('^GSPC', days)
