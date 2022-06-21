@@ -60,6 +60,7 @@ def bbb(days=90):
             break
         except KeyError:
             pass
+    df = df.loc[dte:df.index[-1]]
     ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
     return df, ch
 
@@ -77,6 +78,7 @@ def frt():
             break
         except KeyError:
             pass
+    df = df.loc[dte:df.index[-1]]
     ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
     return df, ch
 
@@ -94,6 +96,7 @@ def swap():
             break
         except KeyError:
             pass
+    df = df.loc[dte:df.index[-1]]
     ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
     return df, ch
 
@@ -169,6 +172,8 @@ with c1:
     st.metric(f'Netflix | {days} days', df.iloc[-1, -2], ch)
     if charts:
         st.area_chart(df['Adj Close'], height=200)
+
+
 
     
 
