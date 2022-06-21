@@ -8,9 +8,14 @@ import datetime
 
 from pandas_datareader import data
 import datetime
+from yield_curve_fr import fr_yield_curve_range_chart
+from yield_curve_us import us_yield_curve_range_chart
+from scpi import scpi_net_sub_chart
+from reit_stocks import fr_prop_index_chart
+from p_layout import layout
 
 
-
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def get_prices(ticker, days=30, dps=0, pc_ch=False):
     start_date = f'{datetime.datetime.now()-datetime.timedelta(days=days):%Y-%m-%d}'
     end_date = f'{datetime.datetime.now():%Y-%m-%d}'
@@ -27,45 +32,91 @@ def get_prices(ticker, days=30, dps=0, pc_ch=False):
     return df, ch
 
 
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+def yield_curves():
+    fr = layout(fr_yield_curve_range_chart())
+    us = layout(us_yield_curve_range_chart())
+    return fr, us
 
-# colors = px.colors.qualitative.Alphabet
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+def reits():
+    return layout(fr_prop_index_chart())
+
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def scpi():
+    return layout(scpi_net_sub_chart())
 
 st.set_page_config(layout="wide")
 
 st.title("AYIM dashboard")
 
-c1, c2 = st.columns(2)
+yfr, yus = yield_curves()
+reits = reits()
+scpi = scpi()
+
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def bbb():
+    df = pd.read_excel('data/bbb.xlsx')
+    print(df['bbb'])
+    ch = f"{df.iloc[-1, -1] - df.iloc[-90, -1]:,.2}%"
+    return df, ch
+
+
+c1, c2, c3 = st.columns(3)
 
 with c1:
-
+    charts = st.checkbox("Charts", value=False)
     days = 90
     df, ch = get_prices('BTC-USD', days)
     st.metric(f'BitCoin:USD | {days} days', df.iloc[-1, -2], ch)
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
 
     days = 90
     df, ch = get_prices('^TNX', days, dps=2, pc_ch=True)
     st.metric(f'10 year US T-bill | {days} days', df.iloc[-1, -2], ch, delta_color="inverse")
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
+
+    days = 90
+    df, ch = bbb()
+    st.metric(f'BBB Euro area | {days} days', df.iloc[-1, -1], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df['bbb'], height=200)
 
     days = 90
     df, ch = get_prices('^GSPC', days)
     st.metric(f'S&P 500 | {days} days', df.iloc[-1, -2], ch)
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
 
-with c2:
     days = 90
     df, ch = get_prices('^FCHI', days)
     st.metric(f'CAC 40 | {days} days', df.iloc[-1, -2], ch)
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
 
 
     days = 90
     df, ch = get_prices('AMZN', days)
     st.metric(f'Amazon | {days} days', df.iloc[-1, -2], ch)
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
 
     days = 90
     df, ch = get_prices('NFLX', days)
     st.metric(f'Netflix | {days} days', df.iloc[-1, -2], ch)
-    # st.area_chart(df['Adj Close'], height=200)
+    if charts:
+        st.area_chart(df['Adj Close'], height=200)
+
+    
+
+with c2:
+    st.plotly_chart(scpi, use_container_width=True)
+    st.plotly_chart(reits, use_container_width=True)
+
+with c3:
+    st.plotly_chart(yfr, use_container_width=True)
+    st.plotly_chart(yus, use_container_width=True)
+
+    
