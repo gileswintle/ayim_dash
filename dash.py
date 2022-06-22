@@ -127,7 +127,7 @@ scpi = scpi()
 ind = ind()
 
 
-c1, c2, c3 = st.columns(3)
+c1, c2, c3 = st.columns([1, 2, 2])
 
 with c1:
     charts = st.checkbox("Charts", value=False)
@@ -196,12 +196,16 @@ with c1:
 
 
 with c2:
-    st.plotly_chart(scpi, use_container_width=True)
-    st.plotly_chart(reits, use_container_width=True)
-    st.plotly_chart(ind, use_container_width=True)
-
-with c3:
     st.plotly_chart(yfr, use_container_width=True)
-    st.plotly_chart(yus, use_container_width=True)
+    st.plotly_chart(ind, use_container_width=True)
     st.write('Country spread: 10-year bonds (source: MTS)')
     components.html(c_spr(), width=400, height=600)
+    
+
+with c3:
+    st.plotly_chart(yus, use_container_width=True)
+    st.plotly_chart(reits, use_container_width=True)
+    st.plotly_chart(scpi, use_container_width=True)
+    
+    
+    
