@@ -138,7 +138,7 @@ with c1:
 
     days = 90
     df, ch = bbb()
-    st.metric(f'BBB Euro area | {days} days', df.iloc[-1], ch, delta_color="inverse")
+    st.metric(f'10-year BBB Euro area | {days} days', df.iloc[-1], ch, delta_color="inverse")
     if charts:
         st.area_chart(df, height=200)
 
