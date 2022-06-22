@@ -131,16 +131,17 @@ with c1:
         st.area_chart(df, height=200)
 
     days = 90
+    df, ch = bbb()
+    st.metric(f'10-year BBB Euro area | {days} days', df.iloc[-1], ch, delta_color="inverse")
+    if charts:
+        st.area_chart(df, height=200)
+
+    days = 90
     df, ch = swap()
     st.metric(f'5-year Euro IR swap | {days} days', df.iloc[-1], ch, delta_color="inverse")
     if charts:
         st.area_chart(df, height=200)
 
-    days = 90
-    df, ch = bbb()
-    st.metric(f'10-year BBB Euro area | {days} days', df.iloc[-1], ch, delta_color="inverse")
-    if charts:
-        st.area_chart(df, height=200)
 
     days = 90
     df, ch = get_prices('BTC-USD', days)
