@@ -55,7 +55,7 @@ def fr_prop_index(start="2020-03-10", end="2021-03-10"):
     df = fr_property_stocks(start=start, end=end)
     col_nos = [x for x in range(len(df.columns))]
     print(col_nos)
-    df = rebase_ind(df, col_nos=col_nos)
+    df = rebase_ind(df, col_nos=col_nos, replace_cols=True)
     return df
 
 
