@@ -113,7 +113,7 @@ def swap():
 def ind():
     return layout(index_chart())
 
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def c_spr():
     return get_table()
 
