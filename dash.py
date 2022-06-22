@@ -15,6 +15,7 @@ from yield_curve_us import us_yield_curve_range_chart
 from scpi import scpi_net_sub_chart
 from reit_stocks import fr_prop_index_chart
 from indexation import index_chart
+from euro_c_spreads import get_table
 from p_layout import layout
 
 
@@ -112,10 +113,13 @@ def swap():
 def ind():
     return layout(index_chart())
 
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+def c_spr():
+    return get_table()
 
 st.set_page_config(layout="wide")
 
-st.title("AYIM dashboard")
+st.title("AYIM European dashboard")
 
 yfr, yus = yield_curves()
 reits = reits()
@@ -199,3 +203,5 @@ with c2:
 with c3:
     st.plotly_chart(yfr, use_container_width=True)
     st.plotly_chart(yus, use_container_width=True)
+    st.write('Country spread: 10-year bonds (source: MTS)')
+    components.html(c_spr(), width=400, height=600)

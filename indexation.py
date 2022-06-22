@@ -68,7 +68,7 @@ def index_chart():
     df = get_indices()
     fig = px.line(df, render_mode="svg")
     fig.update_layout(
-        title="Indexation",
+        title="French indexation",
         xaxis_title="",
         yaxis_title="",
         legend_title="",
