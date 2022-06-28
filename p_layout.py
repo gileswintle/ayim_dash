@@ -1,7 +1,7 @@
 import plotly.express as px
 
 
-def layout(fig, title=False, leg=True):
+def layout(fig, title=False, leg=True, leg_alt=False):
     """
     add title and reduce margins
     """
@@ -27,7 +27,7 @@ def layout(fig, title=False, leg=True):
                 borderwidth=0,
                 itemclick="toggleothers",  # when you are clicking an item in legend all that are not in the same group are hidden
                 x=0,
-                y=0,
+                y=1 if leg_alt else 0,
                 bgcolor="rgb(255, 255, 255, 0.4)",
             ),
             showlegend=True,

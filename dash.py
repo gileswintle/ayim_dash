@@ -44,7 +44,7 @@ def yield_curves():
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def reits():
-    return layout(fr_prop_index_chart())
+    return layout(fr_prop_index_chart(), leg_alt=True)
 
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
@@ -109,9 +109,9 @@ def swap():
     return df, ch
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def ind():
-    return layout(index_chart())
+    return layout(index_chart(), leg_alt=True)
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def c_spr():

@@ -2,6 +2,7 @@ import pandasdmx as pdm
 import pandas as pd
 import plotly.express as px
 from time_series_utils import rebase_ind
+import datetime
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -75,8 +76,28 @@ def index_chart():
         yaxis_tickformat=",.0f",
     )
 
+    # last movements
+    y_mem = 0
+    for c in df.columns:
+        ltm = f'LTM: {(df.loc[df.index[-1], c] / df.loc[df.index[-4], c]) - 1:,.2%}'
+        l5y = f'5Y: {((df.loc[df.index[-1], c] / df.loc[df.index[-21], c])**(1/5)) - 1:,.2%}'
+        label = f'{ltm} {l5y}'
+
+        x = df.index[-1] + datetime.timedelta(days=960)
+        y = df.loc[df.index[-1], c] - 2
+        # if abs(y - y_mem) < 10:
+        #     y += 0
+        # y_mem = y
+        fig.add_annotation(x=x, y=y,
+                text=label,
+                showarrow=False,
+                yshift=10)
+    # from p_layout import layout
+    # fig = layout(fig)
+    # fig.show()
     return fig
 
 
 if __name__ =="__main__":
-	print(get_indices())
+    
+	index_chart()
