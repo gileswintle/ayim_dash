@@ -16,6 +16,8 @@ def get_swap():
 	    df = pd.read_html(t)
 	    df = df[0]
 	    df.set_index('Date', inplace=True)
+	    df.drop(columns=['Open', 'High', 'Low', 'Change %'], inplace=True)
 	    last = df.iloc[0, 0]
+	    print(df)
 
 	return df, last
