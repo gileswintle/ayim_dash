@@ -16,6 +16,7 @@ from scpi import scpi_net_sub_chart
 from reit_stocks import fr_prop_index_chart
 from indexation import index_chart
 from euro_c_spreads import get_table
+from swap import get_swap
 from p_layout import layout
 
 
@@ -105,8 +106,11 @@ def swap():
         except KeyError:
             pass
     df = df.loc[dte : df.index[-1]]
-    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
-    return df, ch
+    
+    _, last = get_swap()
+    ch = f"{last - df.loc[dte]:,.2}%"
+
+    return df, ch, last
 
 
 # @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
@@ -149,9 +153,9 @@ with c1:
         st.area_chart(df, height=200)
 
     days = 90
-    df, ch = swap()
+    df, ch, last = swap()
     st.metric(
-        f"5-year Euro IR swap | {days} days", df.iloc[-1], ch, delta_color="inverse"
+        f"5-year Euro IR swap | {days} days", last, ch, delta_color="inverse"
     )
     if charts:
         st.area_chart(df, height=200)
