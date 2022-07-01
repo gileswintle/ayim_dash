@@ -217,4 +217,5 @@ with c3:
     st.plotly_chart(scpi, use_container_width=True)
     
     
-    
+from bond_composite import euronext
+euronext()
