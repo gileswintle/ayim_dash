@@ -8,4 +8,4 @@ pandas-datareader==0.10.0
 pandaSDMX==1.9.0
 beautifulsoup4==4.11.1
 selenium==4.3.0
-webdriver-manager==3.7.1
+
