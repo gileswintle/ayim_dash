@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
 
-# import plotly.express as px
+import plotly.express as px
 import datetime
 
 # import numpy as np
@@ -16,6 +16,7 @@ from scpi import scpi_net_sub_chart
 from reit_stocks import fr_prop_index_chart
 from indexation import index_chart
 from euro_c_spreads import get_table
+from yield_curve_fr_2 import get_curve, get_10, get_5
 from swap import get_swap
 from p_layout import layout
 
@@ -72,53 +73,6 @@ def bbb(days=90):
     return df, ch
 
 
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
-def frt():
-    df = pd.read_excel("data/bonds.xlsx")
-    df.set_index("Date", inplace=True)
-    df = df.iloc[-90:, 0]
-    df = df.rename("OAT")
-    dte = datetime.datetime.now() - datetime.timedelta(days=days)
-    for n in range(5):
-        try:
-            dte = pd.Timestamp((dte - datetime.timedelta(days=n)).date())
-            st_val = df.loc[dte]
-            break
-        except KeyError:
-            pass
-    df = df.loc[dte : df.index[-1]]
-    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
-    return df, ch
-
-
-# # @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
-# def swap():
-#     df = pd.read_excel("data/bonds.xlsx")
-#     df.set_index("Date", inplace=True)
-#     df = df.iloc[-90:, 3]
-#     df = df.rename("5y IR swap")
-#     dte = datetime.datetime.now() - datetime.timedelta(days=days)
-#     for n in range(5):
-#         try:
-#             dte = pd.Timestamp((dte - datetime.timedelta(days=n)).date())
-#             st_val = df.loc[dte]
-#             break
-#         except KeyError:
-#             pass
-#     df = df.loc[dte : df.index[-1]]
-    
-#     _, last = get_swap()
-#     ch = f"{last - df.loc[dte]:,.2}%"
-
-#     return df, ch, last
-
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
-def swap():
-    df, last = get_swap()
-    ch = f"{last - df.iloc[-1,0]:,.2}%"
-    return df, ch, last
-
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def ind():
     return layout(index_chart(), leg_alt=True)
 
@@ -141,7 +95,7 @@ c1, c2, c3 = st.columns([1, 2, 2])
 with c1:
     charts = st.checkbox("Charts", value=False)
 
-    days = 90
+    days = 30
     df, ch = get_prices("^TNX", days, dps=2, pc_ch=True)
     st.metric(
         f"10-year US T-bill | {days} days", df.iloc[-1, -2], ch, delta_color="inverse"
@@ -149,29 +103,36 @@ with c1:
     if charts:
         st.area_chart(df["Adj Close"], height=200)
 
-    days = 90
-    df, ch = frt()
+
+    df, last, thirty_day = get_10()
     st.metric(
-        f"10-year French T-bill | {days} days", df.iloc[-1], ch, delta_color="inverse"
+        f"10-year French T-bill | 30 days", last, thirty_day, delta_color="inverse"
     )
     if charts:
         st.area_chart(df, height=200)
 
-    days = 30
-    df, ch, last = swap()
+    df, last, thirty_day = get_5()
     st.metric(
-        f"5-year Euro IR swap | {days} days", round(last, 2), ch, delta_color="inverse"
+        f"5-year French T-bill | 30 days", last, thirty_day, delta_color="inverse"
     )
     if charts:
         st.area_chart(df, height=200)
 
-    days = 90
-    df, ch = bbb()
+ 
+    df, last, thirty_day = get_swap()
     st.metric(
-        f"10-year BBB Euro area | {days} days", df.iloc[-1], ch, delta_color="inverse"
+        f"5-year Euro IR swap | 30 days", round(last, 2), thirty_day, delta_color="inverse"
     )
     if charts:
         st.area_chart(df, height=200)
+
+    # days = 90
+    # df, ch = bbb()
+    # st.metric(
+    #     f"10-year BBB Euro area | {days} days", df.iloc[-1], ch, delta_color="inverse"
+    # )
+    # if charts:
+    #     st.area_chart(df, height=200)
 
     days = 90
     df, ch = get_prices("BTC-USD", days)
@@ -217,5 +178,3 @@ with c3:
     st.plotly_chart(scpi, use_container_width=True)
     
     
-# from bond_composite import euronext
-# euronext()

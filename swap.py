@@ -8,16 +8,19 @@ headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 def get_swap():
 	r = requests.get('https://www.investing.com/rates-bonds/eur-5-years-irs-interest-rate-swap-historical-data', headers=headers)
 
-	soup = BeautifulSoup(r.text)
+	soup = BeautifulSoup(r.text, 'html.parser')
+	t = soup.select('#curr_table')
+	t = t[0].decode()
+	df = pd.read_html(t)
+	df = df[0]
+	df.set_index('Date', inplace=True)
+	df.index = pd.to_datetime(df.index)
+	df.drop(columns=['Open', 'High', 'Low', 'Change %'], inplace=True)
+	last = round(df.iloc[0, 0], 2)
+	thirty_day = round(last - df.iloc[-1, 0], 2)
+	print(df)
 
-	for d in soup.find_all('div'):
-	    t = soup.select('#curr_table')
-	    t = t[0].decode()
-	    df = pd.read_html(t)
-	    df = df[0]
-	    df.set_index('Date', inplace=True)
-	    df.drop(columns=['Open', 'High', 'Low', 'Change %'], inplace=True)
-	    last = df.iloc[0, 0]
-	    print(df)
+	return df, last, thirty_day
 
-	return df, last
+if __name__ == "__main__":
+	get_swap()
