@@ -65,7 +65,7 @@ def fr_yield_curve_range(date):
         cur_curve = [np.nan]
         while pd.isnull(
             cur_curve[0]
-        ):  # keep running is API returns and error, wind back one day if no values for the date chosen
+        ):  # keep running if API returns and error, wind back one day if no values for the date chosen
             try:
                 _, cur_curve = fr_yield_curve(curve)
                 curve = datetime.datetime.fromisoformat(curve) - datetime.timedelta(

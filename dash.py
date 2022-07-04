@@ -39,8 +39,11 @@ def get_prices(ticker, days=30, dps=0, pc_ch=False):
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def yield_curves():
-    fr = layout(fr_yield_curve_range_chart())
-    us = layout(us_yield_curve_range_chart())
+    try:
+        fr = layout(fr_yield_curve_range_chart())
+        us = layout(us_yield_curve_range_chart())
+    except:
+        pass
     return fr, us
 
 
@@ -122,7 +125,9 @@ with c1:
         st.area_chart(df_f, height=200)
         st.area_chart(df_g, height=200)
 
+    
 
+ 
     df, last, thirty_day = get_swap()
     st.metric(
         f"5-year Euro IR swap | 30 days", round(last, 2), thirty_day, delta_color="inverse"
