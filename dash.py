@@ -16,7 +16,7 @@ from scpi import scpi_net_sub_chart
 from reit_stocks import fr_prop_index_chart
 from indexation import index_chart
 from euro_c_spreads import get_table
-from yield_curve_fr_2 import get_curve, get_10, get_5
+from yield_curves import get_curve, get_10, get_5
 from swap import get_swap
 from p_layout import layout
 
@@ -95,30 +95,34 @@ c1, c2, c3 = st.columns([1, 2, 2])
 with c1:
     charts = st.checkbox("Charts", value=False)
 
-    days = 30
-    df, ch = get_prices("^TNX", days, dps=2, pc_ch=True)
+    df_u, last_u, thirty_day_u = get_10('u.s.')
+    df_uk, last_uk, thirty_day_uk = get_10('uk')
     st.metric(
-        f"10-year US T-bill | {days} days", df.iloc[-1, -2], ch, delta_color="inverse"
+        f"10-year gov: USA | UK", f'{last_u} | {last_uk}', f'{thirty_day_u} | {thirty_day_uk} (30 day)', delta_color="inverse"
     )
     if charts:
-        st.area_chart(df["Adj Close"], height=200)
+        st.area_chart(df_u, height=200)
+        st.area_chart(df_uk, height=200)
 
-
-    df, last, thirty_day = get_10()
+    df_f, last_f, thirty_day_f = get_10('france')
+    df_g, last_g, thirty_day_g = get_10('germany')
     st.metric(
-        f"10-year French T-bill | 30 days", last, thirty_day, delta_color="inverse"
+        f"10-year gov: France | Germany", f'{last_f} | {last_g}', f'{thirty_day_f} | {thirty_day_g} (30 day)', delta_color="inverse"
     )
     if charts:
-        st.area_chart(df, height=200)
+        st.area_chart(df_f, height=200)
+        st.area_chart(df_g, height=200)
 
-    df, last, thirty_day = get_5()
+    _, last_f, thirty_day_f = get_5('france')
+    _, last_g, thirty_day_g = get_5('germany')
     st.metric(
-        f"5-year French T-bill | 30 days", last, thirty_day, delta_color="inverse"
+        f"5-year gov: France | Germany", f'{last_f} | {last_g}', f'{thirty_day_f} | {thirty_day_g} (30 day)', delta_color="inverse"
     )
     if charts:
-        st.area_chart(df, height=200)
+        st.area_chart(df_f, height=200)
+        st.area_chart(df_g, height=200)
 
- 
+
     df, last, thirty_day = get_swap()
     st.metric(
         f"5-year Euro IR swap | 30 days", round(last, 2), thirty_day, delta_color="inverse"
