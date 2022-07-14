@@ -59,7 +59,7 @@ def reits():
 def scpi():
     return layout(scpi_net_sub_chart())
 
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def fr_corp_composite(tickers):
     df, fr_c, fr_spr = composite(tickers)
     return df, fr_c, fr_spr
