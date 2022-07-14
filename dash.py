@@ -19,6 +19,9 @@ from euro_c_spreads import get_table
 from yield_curves import get_curve, get_10, get_5
 from swap import get_swap
 from p_layout import layout
+from bond_composite import composite
+
+tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR0014004FR9']
 
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
@@ -56,24 +59,10 @@ def reits():
 def scpi():
     return layout(scpi_net_sub_chart())
 
-
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
-def bbb(days=90):
-    df = pd.read_excel("data/bonds.xlsx")
-    df.set_index("Date", inplace=True)
-    df = df.iloc[-90:, 4]
-    df = df.rename("Euro BBB")
-    dte = datetime.datetime.now() - datetime.timedelta(days=days)
-    for n in range(5):
-        try:
-            dte = pd.Timestamp((dte - datetime.timedelta(days=n)).date())
-            st_val = df.loc[dte]
-            break
-        except KeyError:
-            pass
-    df = df.loc[dte : df.index[-1]]
-    ch = f"{df.iloc[-1] - df.loc[dte]:,.2}%"
-    return df, ch
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+def fr_corp_composite(tickers):
+    df, fr_c, fr_spr = composite(tickers)
+    return df, fr_c, fr_spr
 
 
 def ind():
@@ -91,7 +80,6 @@ yfr, yus = yield_curves()
 reits = reits()
 scpi = scpi()
 ind = ind()
-
 
 c1, c2, c3 = st.columns([1, 2, 2])
 
@@ -126,8 +114,6 @@ with c1:
         st.area_chart(df_g, height=200)
 
     
-
- 
     df, last, thirty_day = get_swap()
     st.metric(
         f"5-year Euro IR swap | 30 days", round(last, 2), thirty_day, delta_color="inverse"
@@ -135,13 +121,12 @@ with c1:
     if charts:
         st.area_chart(df, height=200)
 
-    # days = 90
-    # df, ch = bbb()
-    # st.metric(
-    #     f"10-year BBB Euro area | {days} days", df.iloc[-1], ch, delta_color="inverse"
-    # )
-    # if charts:
-    #     st.area_chart(df, height=200)
+    df, fr_c, fr_spr = fr_corp_composite(tickers)
+    st.metric(
+        f"AYIM French corporate 10 year | spread", f'{fr_c:,.2%} | {fr_spr:,.2%}', '', delta_color="off"
+    )
+    if charts:
+        st.dataframe(df)
 
     days = 90
     df, ch = get_prices("BTC-USD", days)

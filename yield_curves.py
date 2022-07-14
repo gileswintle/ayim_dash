@@ -15,11 +15,30 @@ def get_curve(country):
 	df = df[0]
 	df.set_index('Name', inplace=True)
 	df.drop(columns=['Unnamed: 0', 'Prev.', 'High', 'Low', 'Chg.', 'Chg. %', 'Time', 'Unnamed: 9'], inplace=True)
-	ten = df.loc['France 10Y', 'Yield']
-	five = df.loc['France 5Y', 'Yield']
+	df.columns=['yield']
+	terms = []
+	for i in df.index:
+		n = i.index(' ')
+		t_str = i[n+1:]
+		t = i[-1]
+		n = int(t_str[:-1])
+		n = n * 12 if t == 'Y' else n
+		terms.append(n)
+	df['term'] = terms
+	df.set_index('term', inplace=True)
 	# print(df)
+	return df
 
-	return df, five, ten
+def get_rf(term_months, country):
+	df = get_curve(country)
+	for n, i in enumerate(df.index):
+		if term_months >= i:
+			lower = i
+			upper = df.index[n+1]
+	inc = round((term_months - lower) / (upper - lower), 2)
+	rf = round(df.loc[lower, 'yield']  + (inc * (df.loc[upper, 'yield'] - df.loc[lower, 'yield'])), 2)
+	# print(df, 'between', lower, upper, inc, rf)
+	return rf
 
 def get_10(country):
 	r = requests.get(f'https://www.investing.com/rates-bonds/{country}-10-year-bond-yield-historical-data', headers=headers)
@@ -35,7 +54,6 @@ def get_10(country):
 	last = round(df.iloc[0, 0], 2)
 	thirty_day = round(last - df.iloc[-1, 0], 2)
 	# print(df)
-
 	return df, last, thirty_day
 
 def get_5(country):
@@ -52,8 +70,9 @@ def get_5(country):
 	last = round(df.iloc[0, 0], 2)
 	thirty_day = round(last - df.iloc[-1, 0], 2)
 	# print (df)
-
 	return df, last, thirty_day
 
 if __name__ == "__main__":
-	get_5('france')
+	# get_5('france')
+	# get_curve('france')
+	get_rf(65, 'france')
