@@ -22,20 +22,26 @@ from p_layout import layout
 from bond_composite import composite
 
 
-LAST_RERUN_DATE = datetime.datetime.now() - datetime.timedelta(days=2)
 
 tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR0014004FR9']
 
-def is_rerun(lrrd):
+def is_rerun():
+    with open('last_run.txt', 'r') as f:
+        lr = f.read()
+        lr = lr.split(',')
+        lr = [int(i) for i in lr]
+    last_run = datetime.datetime(year=lr[0], month=lr[1], day=lr[2], hour=lr[3], minute=lr[4])
     n = datetime.datetime.now()
-    if (datetime.datetime.now() - lrrd) / datetime.timedelta(days=1) >= 1:
+    if (datetime.datetime.now() - last_run) / datetime.timedelta(days=1) >= 1:
         st.legacy_caching.clear_cache()
-        return datetime.datetime.now()
+        n = datetime.datetime.now()
+        with open('last_run.txt', 'w') as f:
+            f.write(f'{n.year}, {n.month}, {n.day}, {n.hour}, {n.minute}')
+        return n
     else:
-        return lrrd
+        return last_run
 
-
-LAST_RERUN_DATE = is_rerun(LAST_RERUN_DATE)
+LAST_RERUN_DATE = is_rerun()
 
 
 
