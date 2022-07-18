@@ -21,18 +21,21 @@ from swap import get_swap
 from p_layout import layout
 from bond_composite import composite
 
-LAST_RERUN_DATE = datetime.datetime.now() - datetime.timedelta(days=1, hours=1)
+LAST_RERUN_DATE = datetime.datetime.now() - datetime.timedelta(days=2)
 
 tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR0014004FR9']
 
-def is_rerun():
+def is_rerun(lrrd):
     n = datetime.datetime.now()
-    if (LAST_RERUN_DATE - datetime.datetime.now()) / datetime.timedelta(days=1) >= 1:
-        LAST_RERUN_DATE = datetime.datetime.now()
+    if (lrrd - datetime.datetime.now()) / datetime.timedelta(days=1) >= 1:
         caching.clear_cache()
+        return datetime.datetime.now()
+    else:
+        return lrrd
 
 
-is_rerun()
+LAST_RERUN_DATE = is_rerun(LAST_RERUN_DATE)
+
 
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
