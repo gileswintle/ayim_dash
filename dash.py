@@ -29,16 +29,10 @@ tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR00
 def is_rerun():
     n = datetime.datetime.now()
     if n.hour == RERUN_HOUR and (LAST_RERUN_DATE - datetime.datetime.now()) / datetime.timedelta(days=1) >= 1:
-        return True
-    else:
-        return False
+        caching.clear_cache()
 
-def cache_clear_dt(dummy):
-    clear_dt = date.today()
-    return clear_dt
-    
-if cache_clear_dt("dummy")<date.today():
-    caching.clear_cache()
+
+is_rerun()
 
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
