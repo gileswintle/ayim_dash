@@ -33,9 +33,15 @@ def is_rerun():
     else:
         return False
 
+def cache_clear_dt(dummy):
+    clear_dt = date.today()
+    return clear_dt
+    
+if cache_clear_dt("dummy")<date.today():
+    caching.clear_cache()
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def get_prices(ticker, days=30, dps=0, pc_ch=False):
     start_date = f"{datetime.datetime.now()-datetime.timedelta(days=days):%Y-%m-%d}"
     end_date = f"{datetime.datetime.now():%Y-%m-%d}"
@@ -51,7 +57,7 @@ def get_prices(ticker, days=30, dps=0, pc_ch=False):
     return df, ch
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def yield_curves():
     try:
         fr = layout(fr_yield_curve_range_chart())
@@ -61,7 +67,7 @@ def yield_curves():
     return fr, us
 
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def reits():
     return layout(fr_prop_index_chart(), leg_alt=True)
 
@@ -70,7 +76,7 @@ def reits():
 def scpi():
     return layout(scpi_net_sub_chart())
 
-# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def fr_corp_composite(tickers):
     df, fr_c, fr_spr = composite(tickers)
     return df, fr_c, fr_spr
@@ -79,7 +85,7 @@ def fr_corp_composite(tickers):
 def ind():
     return layout(index_chart(), leg_alt=True)
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+@st.cache(persist=True, allow_output_mutation=True, show_spinner=True)
 def c_spr():
     return get_table()
 
