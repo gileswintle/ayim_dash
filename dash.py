@@ -21,14 +21,15 @@ from swap import get_swap
 from p_layout import layout
 from bond_composite import composite
 
+
 LAST_RERUN_DATE = datetime.datetime.now() - datetime.timedelta(days=2)
 
 tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR0014004FR9']
 
 def is_rerun(lrrd):
     n = datetime.datetime.now()
-    if (lrrd - datetime.datetime.now()) / datetime.timedelta(days=1) >= 1:
-        caching.clear_cache()
+    if (datetime.datetime.now() - lrrd) / datetime.timedelta(days=1) >= 1:
+        st.legacy_caching.clear_cache()
         return datetime.datetime.now()
     else:
         return lrrd
@@ -89,7 +90,7 @@ def c_spr():
 st.set_page_config(layout="wide")
 
 st.title("AYIM European dashboard")
-st.write(f'Updated {LAST_RERUN_DATE}')
+st.write(f'Updated {LAST_RERUN_DATE:%Y-%m-%d | %H:%M}')
 
 yfr, yus = yield_curves()
 reits = reits()
