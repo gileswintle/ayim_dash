@@ -21,7 +21,18 @@ from swap import get_swap
 from p_layout import layout
 from bond_composite import composite
 
+RERUN_HOUR = 0
+LAST_RERUN_DATE = datetime.datetime.now() - datetime.timedelta(days=1, hours=1)
+
 tickers = ['FR0013424876', 'FR0013505260', 'FR0014006ZC4', 'FR0014000D31', 'FR0014004FR9']
+
+def is_rerun():
+    n = datetime.datetime.now()
+    if n.hour == RERUN_HOUR and (LAST_RERUN_DATE - datetime.datetime.now()) / datetime.timedelta(days=1) >= 1:
+        return True
+    else:
+        return False
+
 
 
 @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
@@ -59,7 +70,7 @@ def reits():
 def scpi():
     return layout(scpi_net_sub_chart())
 
-@st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
+# @st.cache(persist=True, allow_output_mutation=True, show_spinner=True, ttl=86400)
 def fr_corp_composite(tickers):
     df, fr_c, fr_spr = composite(tickers)
     return df, fr_c, fr_spr
