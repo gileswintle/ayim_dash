@@ -89,6 +89,7 @@ def c_spr():
 st.set_page_config(layout="wide")
 
 st.title("AYIM European dashboard")
+st.write(f'Updated {LAST_RERUN_DATE}')
 
 yfr, yus = yield_curves()
 reits = reits()
